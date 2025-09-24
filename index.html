@@ -1,259 +1,222 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Schroedinger's AI</title>
-<style>
-  /* ===== Black & White theme ===== */
-  :root {
-    --bg: #ffffff;
-    --fg: #111111;
-    --muted: #777777;
-    --line: #111111;
-    --stripe: #fafafa;
-    --th: #f8f8f8;
-
-    /* Status pills (monochrome scale) */
-    --alive-bg: #111111;        /* black */
-    --alive-fg: #ffffff;
-    --da-bg: #555555;           /* dark gray */
-    --da-fg: #ffffff;
-    --dead-bg: #DDDDDD;         /* light gray */
-    --dead-fg: #111111;
-  }
-  html, body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  header {
-    background: var(--bg);
-    border-bottom: 2px solid var(--line);
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  h1 {
-    margin: 0;
-    font-size: 20px;
-    line-height: 1.2;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 700;
-  }
-  .muted { color: var(--muted); font-weight: 400; }
-  .small { font-size: 12px; }
-
-  main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 20px 24px 40px;
-  }
-  section + section { margin-top: 28px; }
-  h2 { font-size: 16px; margin: 0 0 10px 0; font-weight: 700; }
-
-  /* Top grid: left (allocation bars) + right (status) */
-  .top-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 16px;
-  }
-
-  /* Allocation bars */
-  .bars {
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 12px;
-    background: #fff;
-  }
-  .bar-row { display: grid; grid-template-columns: 1fr 4fr auto; gap: 10px; align-items: center; margin: 8px 0; }
-  .bar-label { font-weight: 600; }
-  .bar-track {
-    position: relative; height: 10px; background: var(--stripe); border: 1px solid var(--line);
-  }
-  .bar-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: #111; }
-
-  /* Status cards */
-  .grid3 { display: grid; grid-template-columns: 1fr; gap: 14px; }
-  @media (min-width: 700px) {
-    .grid3 { grid-template-columns: 1fr; }
-  }
-  .card {
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 12px;
-    background: #fff;
-  }
-  .pill {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    line-height: 1.5;
-    font-weight: 600;
-  }
-  .pill.alive { background: var(--alive-bg); color: var(--alive-fg); }
-  .pill.da    { background: var(--da-bg);    color: var(--da-fg); }
-  .pill.dead  { background: var(--dead-bg);  color: var(--dead-fg); }
-
-  ul.slim { list-style: none; margin: 8px 0 0; padding: 0; columns: 2; column-gap: 16px; }
-  ul.slim li { break-inside: avoid; padding: 4px 0; font-size: 14px; }
-
-  /* Table */
-  table {
-    width: 100%; border-collapse: collapse; margin: 10px 0 16px;
-  }
-  th, td {
-    border: 1px solid var(--line);
-    padding: 8px 10px;
-    text-align: left;
-    vertical-align: middle;
-    font-size: 14px;
-  }
-  th { background: var(--th); }
-  tbody tr:nth-child(even) { background: var(--stripe); }
-  .right { text-align: right; }
-  .center { text-align: center; }
-  .footnote { color: var(--muted); font-size: 12px; }
-</style>
-</head>
-<body>
-  <header>
-    <h1><img src="schroedinger_40x40.png" alt="Logo" style="height:28px;vertical-align:middle;margin-right:12px;border:1px solid #111;padding:3px;border-radius:4px;background:#fff"/>Schroedinger's AI <span id="asof" class="muted small"></span></h1>
-    <div class="pill" id="counts">–</div>
-  </header>
-
-  <main>
-    <!-- TOP GRID: Left (bars), Right (status) -->
-    <section class="top-grid">
-      <div class="bars">
-        <h2>Current Allocation</h2>
-        <div id="bars-wrap"></div>
-      </div>
-      <div>
-        <h2>Status</h2>
-        <div class="grid3">
-          <div class="card">
-            <div class="pill alive">Alive</div>
-            <ul id="list-alive" class="slim"></ul>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Schrödinger's AI</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --fg: #111111;
+        --muted: #777777;
+        --line: #111111;
+        --stripe: #fafafa;
+        --th: #f8f8f8;
+    
+        --alive-bg: #111111; --alive-fg: #ffffff;
+        --da-bg: #555555;    --da-fg: #ffffff;
+        --dead-bg: #DDDDDD;  --dead-fg: #111111;
+      }
+      html, body {
+        background: var(--bg); color: var(--fg);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
+        margin: 0; padding: 0;
+      }
+      header {
+        border-bottom: 2px solid var(--line);
+        padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      }
+      h1 { margin: 0; font-size: 20px; line-height: 1.2; display: flex; align-items: center; gap: 8px; font-weight: 700; }
+      .muted { color: var(--muted); font-weight: 400; }
+      .small { font-size: 12px; }
+    
+      main { max-width: 1100px; margin: 0 auto; padding: 20px 24px 40px; }
+      section + section { margin-top: 28px; }
+      h2 { font-size: 16px; margin: 0 0 10px 0; font-weight: 700; }
+    
+      .top-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px; }
+    
+      .bars { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fff; }
+      .bar-row { display: grid; grid-template-columns: 1fr 4fr auto; gap: 10px; align-items: center; margin: 8px 0; }
+      .bar-label { font-weight: 600; }
+      .bar-track { position: relative; height: 10px; background: var(--stripe); border: 1px solid var(--line); }
+      .bar-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: #111; }
+    
+      .grid3 { display: grid; grid-template-columns: 1fr; gap: 14px; }
+      .card { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fff; }
+      .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; line-height: 1.5; font-weight: 600; white-space: nowrap; }
+      .pill.alive { background: var(--alive-bg); color: var(--alive-fg); }
+      .pill.da    { background: var(--da-bg);    color: var(--da-fg); }
+      .pill.dead  { background: var(--dead-bg);  color: var(--dead-fg); }
+    
+      ul.slim { list-style: none; margin: 8px 0 0; padding: 0; columns: 2; column-gap: 16px; }
+      ul.slim li { break-inside: avoid; padding: 4px 0; font-size: 14px; }
+    
+      table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; }
+      th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: middle; font-size: 14px; }
+      th { background: var(--th); }
+      tbody tr:nth-child(even) { background: var(--stripe); }
+      .right { text-align: right; }
+      .center { text-align: center; }
+    
+      .footnote {
+        color: var(--muted); font-size: 12px; line-height: 1.5;
+        border: 1px dashed var(--line); border-radius: 8px; padding: 10px 12px; background: #fff;
+      }
+      .fn-block { margin-top: 8px; }
+      .fn-list { margin: 6px 0 0 0; padding-left: 16px; }
+      .fn-list li { margin: 4px 0; }
+      .pill.legend { font-size: 11px; padding: 1px 8px; }
+    
+      .arrow { font-size: 11px; margin-right: 6px; }
+      .arrow.up { color: #111; }
+      .arrow.down { color: #777; }
+      .arrow.flat { color: var(--muted); }
+    </style>
+    </head>
+    <body>
+      <header>
+        <h1><img src="schroedinger_40x40.png" alt="Logo" style="height:28px;vertical-align:middle;margin-right:12px;border:1px solid #111;padding:3px;border-radius:4px;background:#fff"/>Schrödinger's AI <span id="asof" class="muted small"></span></h1>
+        <div class="pill" id="counts">–</div>
+      </header>
+    
+      <main>
+        <section class="top-grid">
+          <div class="bars">
+            <h2>Current Allocation</h2>
+            <div id="bars-wrap"></div>
           </div>
-          <div class="card">
-            <div class="pill da">Dead and Alive</div>
-            <ul id="list-da" class="slim"></ul>
+          <div>
+            <h2>Status</h2>
+            <div class="grid3">
+              <div class="card">
+                <div class="pill alive">Alive</div>
+                <ul id="list-alive" class="slim"></ul>
+              </div>
+              <div class="card">
+                <div class="pill da">Dead and Alive</div>
+                <ul id="list-da" class="slim"></ul>
+              </div>
+              <div class="card">
+                <div class="pill dead">Dead</div>
+                <ul id="list-dead" class="slim"></ul>
+              </div>
+            </div>
           </div>
-          <div class="card">
-            <div class="pill dead">Dead</div>
-            <ul id="list-dead" class="slim"></ul>
+        </section>
+    
+        <section>
+          <h2>Allocation Details</h2>
+          <table id="tbl-weights">
+            <thead>
+              <tr>
+                <th style="width: 20%;">Asset</th>
+                <th style="width: 14%;">State</th>
+                <th style="width: 10%;">Allocation</th>
+                <th style="width: 14%;" class="right">Weight</th>
+                <th style="width: 21%;" class="right">4w Fwd Return</th>
+                <th style="width: 21%;" class="right">Confidence</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+    
+          <div class="footnote">
+            A ✓ in “Allocation” marks assets currently held (weight &gt; 0).
+            <div class="fn-block">
+              <strong>Schrödinger logic (empirical similarity):</strong>
+              <ul class="fn-list">
+                <li><span class="pill legend alive">Alive</span> — strong historical precedent; many close analogues align; expected forward move is meaningfully positive (or negative, if shorts allowed).</li>
+                <li><span class="pill legend dead">Dead</span> — inconclusive precedent; too few or inconsistent analogues; better to stay flat.</li>
+                <li><span class="pill legend da">Dead &amp; Alive</span> — conflicting precedent; some analogues up, others down; model flags uncertainty (sometimes the smartest decision is to wait).</li>
+              </ul>
+            </div>
+            <div class="fn-block">
+              “4w Fwd Return” is the model’s expected return over the next 4 weeks; “Confidence” is the model’s conviction in that 4-week projection.
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FULL TABLE BELOW -->
-    <section>
-      <h2>Allocation Details</h2>
-      <table id="tbl-weights">
-        <thead>
-          <tr>
-            <th style="width: 20%;">Asset</th>
-            <th style="width: 15%;">State</th>
-            <th style="width: 15%;">Allocation</th>
-            <th style="width: 15%;" class="right">Weight</th>
-            <th style="width: 35%;">Notes</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <div class="footnote">A ✓ in “Allocation” marks assets currently held (weight &gt; 0). State uses the Schrödinger mapping: Alive = “Alive (confirmed)”; Dead and Alive = “Alive (candidate)”; Dead = all other states.</div>
-    </section>
-  </main>
-
-  <!-- Embed data (no fetch) -->
-  <script id="payload" type="application/json">{"generated_utc": "2025-09-24T15:03:13Z", "weights_time": "2025-09-19", "weights": {"EEM": 0.043410612131954046, "EFA": 0.03768848709607663, "LQD": 0.2444231855693648, "IEF": 0.26700791669081914, "DBC": 0.04286096197236378, "HYG": 0.3005667046392978, "IWMO": 0.06404213190012376}, "alive": ["DBC", "EEM", "EFA", "GLD", "HYG", "IEF", "IWMO", "LQD", "UUP"], "dead": ["ACWI", "DBMF", "IWM", "QQQ", "SPY", "TLT", "USO", "VNQ", "XLE", "XLF", "XLK"], "meta": {"SPY": {"state": "Dead", "confirm": false, "strength": 0.010776254403552787, "s": 0.07191491408019189, "view_blend": -0.009218479343571293, "view_conf": 0.40370370370370373}, "IWM": {"state": "Dead", "confirm": false, "strength": 0.35946667316102654, "s": 0.11293274836925371, "view_blend": -0.0013965897350181737, "view_conf": 0.48660968660968656}, "QQQ": {"state": "Dead", "confirm": false, "strength": 0.1182892879054187, "s": 0.10219485623306494, "view_blend": -0.007548233683781679, "view_conf": 0.40370370370370373}, "IWMO": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.4918290932998488, "s": 0.07968075280465663, "view_blend": 0.0027387173518781845, "view_conf": 0.5924242424242424}, "EFA": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.024222172291490596, "s": 0.05624798825482137, "view_blend": 0.01474161496880461, "view_conf": 0.812962962962963}, "EEM": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6186403612081928, "s": 0.062262633931079905, "view_blend": 0.02244192927531063, "view_conf": 0.7444444444444445}, "ACWI": {"state": "Dead", "confirm": false, "strength": 0.15841215218622762, "s": 0.09815103569212365, "view_blend": -0.017024443147031096, "view_conf": 0.4481481481481482}, "XLK": {"state": "Dead", "confirm": false, "strength": -0.05288561928527624, "s": 0.09003594812181658, "view_blend": -0.022293024351203044, "view_conf": 0.42820512820512824}, "XLF": {"state": "Dead", "confirm": false, "strength": 0.16828101609452784, "s": 0.03886050686582718, "view_blend": -0.003733420208970697, "view_conf": 0.5425925925925926}, "XLE": {"state": "Dead", "confirm": false, "strength": 0.4392827941168569, "s": 0.10883575644038425, "view_blend": -0.004619822308501031, "view_conf": 0.5095959595959596}, "VNQ": {"state": "Dead", "confirm": false, "strength": 0.193040533532981, "s": 0.06069444699792565, "view_blend": 0.0023253720352308244, "view_conf": 0.5333333333333333}, "TLT": {"state": "Dead", "confirm": false, "strength": 0.6155738810080369, "s": 0.10472011924458342, "view_blend": -0.0003754982569360455, "view_conf": 0.5055555555555555}, "IEF": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.8756578584875603, "s": 0.16290058540766916, "view_blend": 0.005816722836915612, "view_conf": 0.6611111111111111}, "LQD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6821636259118771, "s": 0.15662662774340957, "view_blend": 0.00652001446277479, "view_conf": 0.716883116883117}, "HYG": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5443719741275919, "s": 0.1715703326609654, "view_blend": 0.004993368014679653, "view_conf": 0.6454545454545455}, "GLD": {"state": "Alive (candidate)", "confirm": true, "strength": 0.19576899931461256, "s": 0.06110155634210771, "view_blend": 0.0399907925359664, "view_conf": 0.7555555555555555}, "USO": {"state": "Dead", "confirm": false, "strength": 0.2354249761165621, "s": 0.0828053161318057, "view_blend": -0.021385607951031237, "view_conf": 0.23888888888888885}, "DBC": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5451137376160855, "s": 0.061715063293525045, "view_blend": 0.009639844850113741, "view_conf": 0.6648989898989899}, "UUP": {"state": "Alive (candidate)", "confirm": true, "strength": 0.1187888658818197, "s": 0.04194682023924144, "view_blend": 0.009505984463697301, "view_conf": 0.7166666666666667}, "DBMF": {"state": "Dead", "confirm": false, "strength": 0.266420343489824, "s": 0.1369819555687588, "view_blend": -0.001366248089541288, "view_conf": 0.4777777777777778}}}</script>
-  <script>
-  (function() {
-    const data = JSON.parse(document.getElementById("payload").textContent);
-    const el = (sel) => document.querySelector(sel);
-    const fmtPct = (x) => (x === null || x === undefined) ? "" : (x*100).toFixed(2) + "%";
-
-    // As-of
-    el("#asof").textContent = "as of " + (new Date(data.weights_time)).toISOString().slice(0,10);
-
-    const weights = data.weights || {};
-    const meta = data.meta || {};
-    const tickers = Object.keys(meta).sort();
-
-    // Status categories from meta.state
-    const alive=[], da=[], dead=[];
-    for (const a of tickers) {
-      const st = String((meta[a] && meta[a].state) || "").toLowerCase();
-      if (st === "alive (confirmed)") alive.push(a);
-      else if (st === "alive (candidate)") da.push(a);
-      else dead.push(a);
-    }
-    el("#counts").textContent = `Alive: ${alive.length} · Dead and Alive: ${da.length} · Dead: ${dead.length}`;
-
-    const fillList = (id, arr) => {
-      const ul = el(id);
-      ul.innerHTML = arr.map(a => `<li>${a}</li>`).join("") || "<li><span class='muted'>None</span></li>";
-    };
-    fillList("#list-alive", alive);
-    fillList("#list-da", da);
-    fillList("#list-dead", dead);
-
-    // Allocation bars (allocated first)
-    const barsWrap = el("#bars-wrap");
-    const pairs = Object.entries(weights).sort((a,b)=> b[1]-a[1]);
-    const maxW = pairs.length ? Math.max(...pairs.map(([,w]) => Math.abs(w))) : 0;
-    const mkBar = (asset, w) => {
-      const pct = maxW > 0 ? Math.max(0, Math.min(100, Math.abs(w)/maxW*100)) : 0;
-      return `
-        <div class="bar-row">
-          <div class="bar-label">${asset}</div>
-          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
-          <div class="right" style="width:60px">${fmtPct(w)}</div>
-        </div>`;
-    };
-    barsWrap.innerHTML = pairs.length
-      ? pairs.map(([a,w]) => mkBar(a,w)).join("")
-      : `<div class="small muted">No current allocation.</div>`;
-
-    // Full table
-    const tbody = el("#tbl-weights tbody");
-    const rowHtml = (asset, w) => {
-      const m = meta[asset] || {};
-      let sLabel = "Dead", pillClass = "dead";
-      const st = String(m.state || "").toLowerCase();
-      if (st === "alive (confirmed)") { sLabel = "Alive"; pillClass = "alive"; }
-      else if (st === "alive (candidate)") { sLabel = "Dead and Alive"; pillClass = "da"; }
-
-      const allocMark = (w > 0) ? "✓" : "";
-      const notes = [];
-      if (typeof m.view_blend === "number") notes.push(`view: ${(m.view_blend*100).toFixed(1)}%`);
-      if (typeof m.view_conf === "number") notes.push(`conf: ${(m.view_conf*100).toFixed(1)}%`);
-
-      return `<tr>
-        <td><strong>${asset}</strong></td>
-        <td><span class="pill ${pillClass}">${sLabel}</span></td>
-        <td class="center">${allocMark}</td>
-        <td class="right">${fmtPct(w)}</td>
-        <td>${notes.join(" · ")}</td>
-      </tr>`;
-    };
-
-    let html = "";
-    const inTable = new Set();
-    for (const [a, w] of pairs) { html += rowHtml(a, w); inTable.add(a); }
-    for (const a of tickers) { if (!inTable.has(a)) html += rowHtml(a, 0); }
-    tbody.innerHTML = html || `<tr><td colspan="5" class="center muted">No data</td></tr>`;
-  })();
-  </script>
-</body>
-</html>
+        </section>
+      </main>
+    
+      <script id="payload" type="application/json">{"generated_utc": "2025-09-24T16:42:19Z", "weights_time": "2025-09-19", "weights": {"EEM": 0.04341061213195404, "EFA": 0.03768848709607663, "LQD": 0.2444231855693648, "IEF": 0.26700791669081914, "DBC": 0.04286096197236378, "HYG": 0.3005667046392978, "IWMO": 0.06404213190012376}, "alive": ["DBC", "EEM", "EFA", "GLD", "HYG", "IEF", "IWMO", "LQD", "UUP"], "dead": ["ACWI", "DBMF", "IWM", "QQQ", "SPY", "TLT", "USO", "VNQ", "XLE", "XLF", "XLK"], "meta": {"SPY": {"state": "Dead", "confirm": false, "strength": 0.010776254403552787, "s": 0.07191491408019189, "view_blend": -0.009218479343571293, "view_conf": 0.40370370370370373}, "IWM": {"state": "Dead", "confirm": false, "strength": 0.35946667316102654, "s": 0.11293274836925371, "view_blend": -0.0013965897350181737, "view_conf": 0.48660968660968656}, "QQQ": {"state": "Dead", "confirm": false, "strength": 0.1182892879054187, "s": 0.10219485623306494, "view_blend": -0.007548233683781679, "view_conf": 0.40370370370370373}, "IWMO": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.4918290932998488, "s": 0.07968075280465663, "view_blend": 0.0027387173518781845, "view_conf": 0.5924242424242424}, "EFA": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.024222172291490596, "s": 0.05624798825482137, "view_blend": 0.01474161496880461, "view_conf": 0.812962962962963}, "EEM": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6186403612081928, "s": 0.062262633931079905, "view_blend": 0.02244192927531063, "view_conf": 0.7444444444444445}, "ACWI": {"state": "Dead", "confirm": false, "strength": 0.15841215218622762, "s": 0.09815103569212365, "view_blend": -0.017024443147031096, "view_conf": 0.4481481481481482}, "XLK": {"state": "Dead", "confirm": false, "strength": -0.05288561928527624, "s": 0.09003594812181658, "view_blend": -0.022293024351203044, "view_conf": 0.42820512820512824}, "XLF": {"state": "Dead", "confirm": false, "strength": 0.16828101609452784, "s": 0.03886050686582718, "view_blend": -0.003733420208970697, "view_conf": 0.5425925925925926}, "XLE": {"state": "Dead", "confirm": false, "strength": 0.4392827941168569, "s": 0.10883575644038425, "view_blend": -0.004619822308501031, "view_conf": 0.5095959595959596}, "VNQ": {"state": "Dead", "confirm": false, "strength": 0.193040533532981, "s": 0.06069444699792565, "view_blend": 0.0023253720352308244, "view_conf": 0.5333333333333333}, "TLT": {"state": "Dead", "confirm": false, "strength": 0.6155738810080369, "s": 0.10472011924458342, "view_blend": -0.0003754982569360455, "view_conf": 0.5055555555555555}, "IEF": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.8756578584875603, "s": 0.16290058540766916, "view_blend": 0.005816722836915612, "view_conf": 0.6611111111111111}, "LQD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6821636259118771, "s": 0.15662662774340957, "view_blend": 0.00652001446277479, "view_conf": 0.716883116883117}, "HYG": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5443719741275919, "s": 0.1715703326609654, "view_blend": 0.004993368014679653, "view_conf": 0.6454545454545455}, "GLD": {"state": "Alive (candidate)", "confirm": true, "strength": 0.19576899931461256, "s": 0.06110155634210771, "view_blend": 0.0399907925359664, "view_conf": 0.7555555555555555}, "USO": {"state": "Dead", "confirm": false, "strength": 0.2354249761165621, "s": 0.0828053161318057, "view_blend": -0.021385607951031237, "view_conf": 0.23888888888888885}, "DBC": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5451137376160855, "s": 0.061715063293525045, "view_blend": 0.009639844850113741, "view_conf": 0.6648989898989899}, "UUP": {"state": "Alive (candidate)", "confirm": true, "strength": 0.1187888658818197, "s": 0.04194682023924144, "view_blend": 0.009505984463697301, "view_conf": 0.7166666666666667}, "DBMF": {"state": "Dead", "confirm": false, "strength": 0.266420343489824, "s": 0.1369819555687588, "view_blend": -0.001366248089541288, "view_conf": 0.4777777777777778}}}</script>
+      <script>
+      (function() {
+        const data = JSON.parse(document.getElementById("payload").textContent);
+        const el = (sel) => document.querySelector(sel);
+        const fmtPct  = (x) => (x === null || x === undefined || isNaN(x)) ? "" : (x*100).toFixed(2) + "%";
+        const fmtPct1 = (x) => (x === null || x === undefined || isNaN(x)) ? "" : (x*100).toFixed(1) + "%";
+    
+        const arrowPct = (x) => {
+          if (x === null || x === undefined || isNaN(x)) return "";
+          if (x > 0) return `<span class="arrow up">▲</span>${fmtPct1(x)}`;
+          if (x < 0) return `<span class="arrow down">▼</span>${fmtPct1(x)}`;
+          return `<span class="arrow flat">—</span>${fmtPct1(x)}`;
+        };
+    
+        el("#asof").textContent = "as of " + (new Date(data.weights_time)).toISOString().slice(0,10);
+    
+        const weights = data.weights || {};
+        const meta = data.meta || {};
+        const tickers = Object.keys(meta).sort();
+    
+        const alive=[], da=[], dead=[];
+        for (const a of tickers) {
+          const st = String((meta[a] && meta[a].state) || "").toLowerCase();
+          if (st === "alive (confirmed)") alive.push(a);
+          else if (st === "alive (candidate)") da.push(a);
+          else dead.push(a);
+        }
+        el("#counts").textContent = `Alive: ${alive.length} · Dead and Alive: ${da.length} · Dead: ${dead.length}`;
+    
+        const fillList = (id, arr) => {
+          const ul = el(id);
+          ul.innerHTML = arr.map(a => `<li>${a}</li>`).join("") || "<li><span class='muted'>None</span></li>";
+        };
+        fillList("#list-alive", alive); fillList("#list-da", da); fillList("#list-dead", dead);
+    
+        const barsWrap = el("#bars-wrap");
+        const pairs = Object.entries(weights).sort((a,b)=> b[1]-a[1]);
+        const maxW = pairs.length ? Math.max(...pairs.map(([,w]) => Math.abs(w))) : 0;
+        const mkBar = (asset, w) => {
+          const pct = maxW > 0 ? Math.max(0, Math.min(100, Math.abs(w)/maxW*100)) : 0;
+          return `
+            <div class="bar-row">
+              <div class="bar-label">${asset}</div>
+              <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+              <div class="right" style="width:60px">${fmtPct(w)}</div>
+            </div>`;
+        };
+        barsWrap.innerHTML = pairs.length ? pairs.map(([a,w]) => mkBar(a,w)).join("") : `<div class="small muted">No current allocation.</div>`;
+    
+        const tbody = el("#tbl-weights tbody");
+        const rowHtml = (asset, w) => {
+          const m = meta[asset] || {};
+          let sLabel = "Dead", pillClass = "dead";
+          const st = String(m.state || "").toLowerCase();
+          if (st === "alive (confirmed)") { sLabel = "Alive"; pillClass = "alive"; }
+          else if (st === "alive (candidate)") { sLabel = "Dead and Alive"; pillClass = "da"; }
+    
+          const allocMark = (w > 0) ? "✓" : "";
+          const expectedHTML = arrowPct(m.view_blend);
+          const confHTML     = fmtPct1(m.view_conf);
+    
+          return `<tr>
+            <td><a href="https://finance.yahoo.com/quote/${asset}" target="_blank" rel="noopener noreferrer"><strong>${asset}</strong></a></td>
+            <td><span class="pill ${pillClass}">${sLabel}</span></td>
+            <td class="center">${allocMark}</td>
+            <td class="right">${fmtPct(w)}</td>
+            <td class="right">${expectedHTML}</td>
+            <td class="right">${confHTML}</td>
+          </tr>`;
+        };
+    
+        let html = "";
+        const inTable = new Set();
+        for (const [a, w] of pairs) { html += rowHtml(a, w); inTable.add(a); }
+        for (const a of tickers) { if (!inTable.has(a)) html += rowHtml(a, 0); }
+        tbody.innerHTML = html || `<tr><td colspan="6" class="center muted">No data</td></tr>`;
+      })();
+      </script>
+    </body>
+    </html>
+    
