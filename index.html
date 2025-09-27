@@ -6,72 +6,53 @@
     <title>Schrödinger's AI</title>
     <style>
       :root {
-        --bg: #ffffff;
-        --fg: #111111;
-        --muted: #777777;
-        --line: #111111;
-        --stripe: #fafafa;
-        --th: #f8f8f8;
-    
-        --alive-bg: #111111; --alive-fg: #ffffff;
-        --da-bg: #555555;    --da-fg: #ffffff;
-        --dead-bg: #DDDDDD;  --dead-fg: #111111;
+        --bg:#ffffff; --fg:#111111; --muted:#777777; --line:#111111;
+        --stripe:#fafafa; --th:#f8f8f8;
+        /* theme-able vars (will be overridden per tab) */
+        --bar-fill:#111111;
+        --alive-bg:#111111; --alive-fg:#ffffff;
+        --da-bg:#555555;    --da-fg:#ffffff;
+        --dead-bg:#DDDDDD;  --dead-fg:#111111;
       }
-      html, body {
-        background: var(--bg); color: var(--fg);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
-        margin: 0; padding: 0;
-      }
-      header {
-        border-bottom: 2px solid var(--line);
-        padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-      }
-      h1 { margin: 0; font-size: 20px; line-height: 1.2; display: flex; align-items: center; gap: 8px; font-weight: 700; }
-      .muted { color: var(--muted); font-weight: 400; }
-      .small { font-size: 12px; }
+      html,body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,system-ui,sans-serif;margin:0;padding:0;}
+      header{border-bottom:2px solid var(--line);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+      h1{margin:0;font-size:20px;line-height:1.2;display:flex;align-items:center;gap:8px;font-weight:700;}
+      .muted{color:var(--muted);font-weight:400;} .small{font-size:12px;}
+      main{max-width:1100px;margin:0 auto;padding:20px 24px 40px;}
+      section+section{margin-top:28px;} h2{font-size:16px;margin:0 0 10px 0;font-weight:700;}
     
-      main { max-width: 1100px; margin: 0 auto; padding: 20px 24px 40px; }
-      section + section { margin-top: 28px; }
-      h2 { font-size: 16px; margin: 0 0 10px 0; font-weight: 700; }
+      .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+      .tab-btn{border:1px solid var(--line);background:#fff;padding:6px 12px;border-radius:999px;font-size:13px;cursor:pointer;user-select:none;}
+      .tab-btn[aria-selected="true"]{background:#111;color:#fff;}
     
-      .top-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px; }
+      .top-grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:16px;}
+      .bars{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fff;}
+      .bar-row{display:grid;grid-template-columns:1fr 4fr auto;gap:10px;align-items:center;margin:8px 0;}
+      .bar-label{font-weight:600;}
+      .bar-track{position:relative;height:10px;background:var(--stripe);border:1px solid var(--line);}
+      .bar-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:var(--bar-fill);}
     
-      .bars { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fff; }
-      .bar-row { display: grid; grid-template-columns: 1fr 4fr auto; gap: 10px; align-items: center; margin: 8px 0; }
-      .bar-label { font-weight: 600; }
-      .bar-track { position: relative; height: 10px; background: var(--stripe); border: 1px solid var(--line); }
-      .bar-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: #111; }
+      .grid3{display:grid;grid-template-columns:1fr;gap:14px;}
+      .card{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fff;}
+      .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;line-height:1.5;font-weight:600;white-space:nowrap;}
+      .pill.alive{background:var(--alive-bg);color:var(--alive-fg);}
+      .pill.da{background:var(--da-bg);color:var(--da-fg);}
+      .pill.dead{background:var(--dead-bg);color:var(--dead-fg);}
     
-      .grid3 { display: grid; grid-template-columns: 1fr; gap: 14px; }
-      .card { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fff; }
-      .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; line-height: 1.5; font-weight: 600; white-space: nowrap; }
-      .pill.alive { background: var(--alive-bg); color: var(--alive-fg); }
-      .pill.da    { background: var(--da-bg);    color: var(--da-fg); }
-      .pill.dead  { background: var(--dead-bg);  color: var(--dead-fg); }
+      ul.slim{list-style:none;margin:8px 0 0;padding:0;columns:2;column-gap:16px;}
+      ul.slim li{break-inside:avoid;padding:4px 0;font-size:14px;}
     
-      ul.slim { list-style: none; margin: 8px 0 0; padding: 0; columns: 2; column-gap: 16px; }
-      ul.slim li { break-inside: avoid; padding: 4px 0; font-size: 14px; }
+      table{width:100%;border-collapse:collapse;margin:10px 0 16px;}
+      th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle;font-size:14px;}
+      th{background:var(--th);} tbody tr:nth-child(even){background:var(--stripe);}
+      .right{text-align:right;} .center{text-align:center;}
     
-      table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; }
-      th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: middle; font-size: 14px; }
-      th { background: var(--th); }
-      tbody tr:nth-child(even) { background: var(--stripe); }
-      .right { text-align: right; }
-      .center { text-align: center; }
+      .footnote{color:var(--muted);font-size:12px;line-height:1.5;border:1px dashed var(--line);border-radius:8px;padding:10px 12px;background:#fff;}
+      .fn-block{margin-top:8px;} .fn-list{margin:6px 0 0 0;padding-left:16px;} .fn-list li{margin:4px 0;}
+      .pill.legend{font-size:11px;padding:1px 8px;}
     
-      .footnote {
-        color: var(--muted); font-size: 12px; line-height: 1.5;
-        border: 1px dashed var(--line); border-radius: 8px; padding: 10px 12px; background: #fff;
-      }
-      .fn-block { margin-top: 8px; }
-      .fn-list { margin: 6px 0 0 0; padding-left: 16px; }
-      .fn-list li { margin: 4px 0; }
-      .pill.legend { font-size: 11px; padding: 1px 8px; }
-    
-      .arrow { font-size: 11px; margin-right: 6px; }
-      .arrow.up { color: #111; }
-      .arrow.down { color: #777; }
-      .arrow.flat { color: var(--muted); }
+      .arrow{font-size:11px;margin-right:6px;}
+      .arrow.up{color:#111;} .arrow.down{color:#777;} .arrow.flat{color:var(--muted);}
     </style>
     </head>
     <body>
@@ -81,6 +62,8 @@
       </header>
     
       <main>
+        <div class="tabs" id="tabs"></div>
+    
         <section class="top-grid">
           <div class="bars">
             <h2>Current Allocation</h2>
@@ -110,12 +93,12 @@
           <table id="tbl-weights">
             <thead>
               <tr>
-                <th style="width: 20%;">Asset</th>
-                <th style="width: 14%;">State</th>
-                <th style="width: 10%;">Allocation</th>
-                <th style="width: 14%;" class="right">Weight</th>
-                <th style="width: 21%;" class="right">4w Fwd Return</th>
-                <th style="width: 21%;" class="right">Confidence</th>
+                <th style="width:20%;">Asset</th>
+                <th style="width:14%;">State</th>
+                <th style="width:10%;">Allocation</th>
+                <th style="width:14%;" class="right">Weight</th>
+                <th style="width:21%;" class="right">4w Fwd Return</th>
+                <th style="width:21%;" class="right">Confidence</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -138,83 +121,142 @@
         </section>
       </main>
     
-      <script id="payload" type="application/json">{"generated_utc": "2025-09-24T16:42:19Z", "weights_time": "2025-09-19", "weights": {"EEM": 0.04341061213195404, "EFA": 0.03768848709607663, "LQD": 0.2444231855693648, "IEF": 0.26700791669081914, "DBC": 0.04286096197236378, "HYG": 0.3005667046392978, "IWMO": 0.06404213190012376}, "alive": ["DBC", "EEM", "EFA", "GLD", "HYG", "IEF", "IWMO", "LQD", "UUP"], "dead": ["ACWI", "DBMF", "IWM", "QQQ", "SPY", "TLT", "USO", "VNQ", "XLE", "XLF", "XLK"], "meta": {"SPY": {"state": "Dead", "confirm": false, "strength": 0.010776254403552787, "s": 0.07191491408019189, "view_blend": -0.009218479343571293, "view_conf": 0.40370370370370373}, "IWM": {"state": "Dead", "confirm": false, "strength": 0.35946667316102654, "s": 0.11293274836925371, "view_blend": -0.0013965897350181737, "view_conf": 0.48660968660968656}, "QQQ": {"state": "Dead", "confirm": false, "strength": 0.1182892879054187, "s": 0.10219485623306494, "view_blend": -0.007548233683781679, "view_conf": 0.40370370370370373}, "IWMO": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.4918290932998488, "s": 0.07968075280465663, "view_blend": 0.0027387173518781845, "view_conf": 0.5924242424242424}, "EFA": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.024222172291490596, "s": 0.05624798825482137, "view_blend": 0.01474161496880461, "view_conf": 0.812962962962963}, "EEM": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6186403612081928, "s": 0.062262633931079905, "view_blend": 0.02244192927531063, "view_conf": 0.7444444444444445}, "ACWI": {"state": "Dead", "confirm": false, "strength": 0.15841215218622762, "s": 0.09815103569212365, "view_blend": -0.017024443147031096, "view_conf": 0.4481481481481482}, "XLK": {"state": "Dead", "confirm": false, "strength": -0.05288561928527624, "s": 0.09003594812181658, "view_blend": -0.022293024351203044, "view_conf": 0.42820512820512824}, "XLF": {"state": "Dead", "confirm": false, "strength": 0.16828101609452784, "s": 0.03886050686582718, "view_blend": -0.003733420208970697, "view_conf": 0.5425925925925926}, "XLE": {"state": "Dead", "confirm": false, "strength": 0.4392827941168569, "s": 0.10883575644038425, "view_blend": -0.004619822308501031, "view_conf": 0.5095959595959596}, "VNQ": {"state": "Dead", "confirm": false, "strength": 0.193040533532981, "s": 0.06069444699792565, "view_blend": 0.0023253720352308244, "view_conf": 0.5333333333333333}, "TLT": {"state": "Dead", "confirm": false, "strength": 0.6155738810080369, "s": 0.10472011924458342, "view_blend": -0.0003754982569360455, "view_conf": 0.5055555555555555}, "IEF": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.8756578584875603, "s": 0.16290058540766916, "view_blend": 0.005816722836915612, "view_conf": 0.6611111111111111}, "LQD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6821636259118771, "s": 0.15662662774340957, "view_blend": 0.00652001446277479, "view_conf": 0.716883116883117}, "HYG": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5443719741275919, "s": 0.1715703326609654, "view_blend": 0.004993368014679653, "view_conf": 0.6454545454545455}, "GLD": {"state": "Alive (candidate)", "confirm": true, "strength": 0.19576899931461256, "s": 0.06110155634210771, "view_blend": 0.0399907925359664, "view_conf": 0.7555555555555555}, "USO": {"state": "Dead", "confirm": false, "strength": 0.2354249761165621, "s": 0.0828053161318057, "view_blend": -0.021385607951031237, "view_conf": 0.23888888888888885}, "DBC": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5451137376160855, "s": 0.061715063293525045, "view_blend": 0.009639844850113741, "view_conf": 0.6648989898989899}, "UUP": {"state": "Alive (candidate)", "confirm": true, "strength": 0.1187888658818197, "s": 0.04194682023924144, "view_blend": 0.009505984463697301, "view_conf": 0.7166666666666667}, "DBMF": {"state": "Dead", "confirm": false, "strength": 0.266420343489824, "s": 0.1369819555687588, "view_blend": -0.001366248089541288, "view_conf": 0.4777777777777778}}}</script>
+      <script id="payload-macro" type="application/json">{"generated_utc": "2025-09-27T20:36:42Z", "weights_time": "2025-09-26", "weights": {"TLT": 0.08954229149013763, "EFA": 0.030132879051939503, "EEM": 0.03307667978183741, "LQD": 0.2522391937660709, "IEF": 0.2618067827198695, "HYG": 0.28933045582103983, "IWMO": 0.04387171736910519}, "alive": ["EEM", "EFA", "GLD", "HYG", "IEF", "IWMO", "LQD", "TLT", "UUP", "VNQ", "XLF"], "dead": ["ACWI", "DBC", "DBMF", "IWM", "QQQ", "SPY", "USO", "XLE", "XLK"], "meta": {"XLF": {"state": "Alive (candidate)", "confirm": true, "strength": 0.15397318452625885, "s": 0.030422186221727987, "view_blend": 0.007557873246838834, "view_conf": 0.7032828282828283}, "XLE": {"state": "Dead", "confirm": false, "strength": 0.46476124829087984, "s": 0.13500262001589305, "view_blend": -0.034498854694980825, "view_conf": 0.2708624708624709}, "XLK": {"state": "Dead", "confirm": false, "strength": -0.019513185885886908, "s": 0.08326395902389735, "view_blend": -0.004543080170862844, "view_conf": 0.4845959595959595}, "SPY": {"state": "Dead", "confirm": false, "strength": 0.01861026582405989, "s": 0.06597950526097496, "view_blend": -0.008763673795941316, "view_conf": 0.39318181818181813}, "EFA": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.037936029842118746, "s": 0.05257404364578252, "view_blend": 0.01671238957890083, "view_conf": 0.7897435897435899}, "IWM": {"state": "Dead", "confirm": false, "strength": 0.3856236587395514, "s": 0.11782317272738452, "view_blend": -0.021534865819725166, "view_conf": 0.3962962962962963}, "QQQ": {"state": "Dead", "confirm": false, "strength": 0.13331764220769804, "s": 0.09528902029421658, "view_blend": -0.003697219648275029, "view_conf": 0.5437229437229437}, "IWMO": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5000509143767402, "s": 0.06954100083049969, "view_blend": 0.017080125921203844, "view_conf": 0.644949494949495}, "EEM": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5990855169658584, "s": 0.05672503618654327, "view_blend": 0.03183630199040946, "view_conf": 0.9474747474747475}, "ACWI": {"state": "Dead", "confirm": false, "strength": 0.17591111768946566, "s": 0.0908712633790392, "view_blend": -0.008277908973487902, "view_conf": 0.39318181818181813}, "VNQ": {"state": "Alive (candidate)", "confirm": true, "strength": 0.20774608294458208, "s": 0.06195891506906595, "view_blend": 0.005487367270890804, "view_conf": 0.6166666666666667}, "TLT": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6206888706978619, "s": 0.10552527822309314, "view_blend": 0.007988430490175601, "view_conf": 0.6313131313131314}, "IEF": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.8878915199251287, "s": 0.17556110265668917, "view_blend": 0.004967623246681625, "view_conf": 0.6123737373737373}, "HYG": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5698763737325658, "s": 0.18329149726517982, "view_blend": 0.007654050359935956, "view_conf": 0.7867243867243867}, "LQD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6887084766339073, "s": 0.1727383880808266, "view_blend": 0.01504181056370207, "view_conf": 0.894949494949495}, "GLD": {"state": "Alive (candidate)", "confirm": true, "strength": 0.2085891702963769, "s": 0.0632316752548674, "view_blend": 0.04363714480634462, "view_conf": 0.7650793650793651}, "USO": {"state": "Dead", "confirm": false, "strength": 0.23848314825578987, "s": 0.10317076300507286, "view_blend": -0.015830319815116612, "view_conf": 0.33589743589743587}, "DBC": {"state": "Dead", "confirm": false, "strength": 0.5431826244542979, "s": 0.07956188802715507, "view_blend": -0.00430166361312001, "view_conf": 0.45749805749805755}, "UUP": {"state": "Alive (candidate)", "confirm": true, "strength": 0.11997661294558215, "s": 0.0529426456431532, "view_blend": 0.006799014398809295, "view_conf": 0.6167388167388167}, "DBMF": {"state": "Dead", "confirm": false, "strength": 0.2651648040855463, "s": 0.13297935849091616, "view_blend": 0.00325211297043363, "view_conf": 0.529040404040404}}}</script><script id="links-macro" type="application/json">{"USO": "USO", "DBMF": "DBMF", "UUP": "UUP", "IEF": "IEF", "SPY": "SPY", "LQD": "LQD", "IWMO": "IS3R.DE", "TLT": "TLT", "XLK": "XLK", "EFA": "EFA", "VNQ": "VNQ", "GLD": "GLD", "XLF": "XLF", "HYG": "HYG", "DBC": "DBC", "QQQ": "QQQ", "XLE": "XLE", "IWM": "IWM", "ACWI": "ACWI", "EEM": "EEM"}</script><script id="theme-macro" type="application/json">{"bar": "rgba(47,58,70,0.25)", "alive_bg": "rgba(47,58,70,0.65)", "alive_fg": "#FFFFFF", "da_bg": "#6B7280", "da_fg": "#FFFFFF", "dead_bg": "#E5E7EB", "dead_fg": "#111111"}</script><script id="payload-crypto" type="application/json">{"generated_utc": "2025-09-27T20:36:42Z", "weights_time": "2025-09-26", "weights": {"DOGEUSD": 0.0682290617940592, "XRPUSD": 0.0682290617940592, "SOLUSD": 0.0682290617940592, "SUIUSD": 0.0682290617940592, "HYPEUSD": 0.0682290617940592}, "alive": ["AVAXUSD", "DOGEUSD", "HYPEUSD", "LINKUSD", "SOLUSD", "SUIUSD", "XRPUSD"], "dead": ["BNBUSD", "BTCUSD", "ETHUSD"], "meta": {"BTCUSD": {"state": "Dead", "confirm": false, "strength": 0.3408698251680735, "s": 2.248894042840454e-05, "view_blend": -0.010764511783756762, "view_conf": 0.5656565656565656}, "ETHUSD": {"state": "Dead", "confirm": false, "strength": 0.23021575716145914, "s": 1.464542778434041e-06, "view_blend": 0.014508656377803531, "view_conf": 0.34074074074074073}, "SOLUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6282907896520387, "s": 7.103250423737021e-10, "view_blend": 0.10304208158952506, "view_conf": 0.5815656565656565}, "XRPUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": -0.5465098999498936, "s": 8.456257315467382e-07, "view_blend": 0.032129347607853964, "view_conf": 0.5613275613275613}, "DOGEUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": -0.8605102610291522, "s": 3.427262029883791e-09, "view_blend": 0.09500715112186675, "view_conf": 0.6886002886002887}, "AVAXUSD": {"state": "Alive (candidate)", "confirm": true, "strength": -0.19405949007657686, "s": 3.557017944982031e-10, "view_blend": 0.1670499463230147, "view_conf": 0.7027417027417028}, "LINKUSD": {"state": "Alive (candidate)", "confirm": true, "strength": -0.17812761818494105, "s": 4.1717294636410065e-05, "view_blend": 0.14818187017878523, "view_conf": 0.5527777777777777}, "BNBUSD": {"state": "Dead", "confirm": false, "strength": -0.8750237450781189, "s": 3.174767435097844e-10, "view_blend": 0.09282925413315125, "view_conf": 0.5447811447811447}, "HYPEUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.0, "s": null, "view_blend": 0.1151190619056325, "view_conf": 0.6502164502164502}, "SUIUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": 1.0012489945841936, "s": 4.50130698425941e-14, "view_blend": 0.023195211557403797, "view_conf": 0.6787878787878787}}}</script><script id="links-crypto" type="application/json">{"ETHUSD": "ETH-USD", "XRPUSD": "XRP-USD", "BTCUSD": "BTC-USD", "SOLUSD": "SOL-USD", "LINKUSD": "LINK-USD", "DOGEUSD": "DOGE-USD", "SUIUSD": "SUI20947-USD", "BNBUSD": "BNB-USD", "HYPEUSD": "HYPE32196-USD", "AVAXUSD": "AVAX-USD"}</script><script id="theme-crypto" type="application/json">{"bar": "rgba(63,63,70,0.25)", "alive_bg": "rgba(63,63,70,0.65)", "alive_fg": "#FFFFFF", "da_bg": "#6B7280", "da_fg": "#FFFFFF", "dead_bg": "#E5E7EB", "dead_fg": "#111111"}</script>
+    
       <script>
-      (function() {
-        const data = JSON.parse(document.getElementById("payload").textContent);
-        const el = (sel) => document.querySelector(sel);
-        const fmtPct  = (x) => (x === null || x === undefined || isNaN(x)) ? "" : (x*100).toFixed(2) + "%";
-        const fmtPct1 = (x) => (x === null || x === undefined || isNaN(x)) ? "" : (x*100).toFixed(1) + "%";
-    
+      (function(){
+        const byId = (id) => document.getElementById(id);
+        const el   = (sel) => document.querySelector(sel);
+        const qsa  = (sel) => Array.from(document.querySelectorAll(sel));
+        const fmtPct  = (x) => (x===null||x===undefined||isNaN(x)) ? "" : (x*100).toFixed(2)+"%";
+        const fmtPct1 = (x) => (x===null||x===undefined||isNaN(x)) ? "" : (x*100).toFixed(1)+"%";
         const arrowPct = (x) => {
-          if (x === null || x === undefined || isNaN(x)) return "";
-          if (x > 0) return `<span class="arrow up">▲</span>${fmtPct1(x)}`;
-          if (x < 0) return `<span class="arrow down">▼</span>${fmtPct1(x)}`;
-          return `<span class="arrow flat">—</span>${fmtPct1(x)}`;
+          if (x===null||x===undefined||isNaN(x)) return "";
+          if (x>0) return '<span class="arrow up">▲</span>'+fmtPct1(x);
+          if (x<0) return '<span class="arrow down">▼</span>'+fmtPct1(x);
+          return '<span class="arrow flat">—</span>'+fmtPct1(x);
         };
     
-        el("#asof").textContent = "as of " + (new Date(data.weights_time)).toISOString().slice(0,10);
+        const uniNames = ["Macro", "Crypto"];
+        const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+        const loads = (prefix) => Object.fromEntries(
+          uniNames.map(n => [n, JSON.parse(byId(prefix+slug(n)).textContent)])
+        );
+        const universes = loads('payload-');
+        const links     = loads('links-');
+        const themes    = loads('theme-');
     
-        const weights = data.weights || {};
-        const meta = data.meta || {};
-        const tickers = Object.keys(meta).sort();
+        const tabs = el('#tabs');
+        uniNames.forEach((name, i) => {
+          const b = document.createElement('button');
+          b.className = 'tab-btn';
+          b.setAttribute('role','tab');
+          b.dataset.uni = name;
+          b.textContent = name;
+          if (i===0) b.setAttribute('aria-selected','true');
+          tabs.appendChild(b);
+        });
     
-        const alive=[], da=[], dead=[];
-        for (const a of tickers) {
-          const st = String((meta[a] && meta[a].state) || "").toLowerCase();
-          if (st === "alive (confirmed)") alive.push(a);
-          else if (st === "alive (candidate)") da.push(a);
-          else dead.push(a);
+        function applyTheme(t){
+          const r = document.documentElement.style;
+          if (!t) return;
+          if (t.bar)       r.setProperty('--bar-fill', t.bar);
+          if (t.alive_bg)  r.setProperty('--alive-bg', t.alive_bg);
+          if (t.alive_fg)  r.setProperty('--alive-fg', t.alive_fg);
+          if (t.da_bg)     r.setProperty('--da-bg', t.da_bg);
+          if (t.da_fg)     r.setProperty('--da-fg', t.da_fg);
+          if (t.dead_bg)   r.setProperty('--dead-bg', t.dead_bg);
+          if (t.dead_fg)   r.setProperty('--dead-fg', t.dead_fg);
         }
-        el("#counts").textContent = `Alive: ${alive.length} · Dead and Alive: ${da.length} · Dead: ${dead.length}`;
     
-        const fillList = (id, arr) => {
-          const ul = el(id);
-          ul.innerHTML = arr.map(a => `<li>${a}</li>`).join("") || "<li><span class='muted'>None</span></li>";
-        };
-        fillList("#list-alive", alive); fillList("#list-da", da); fillList("#list-dead", dead);
+        function yahooFor(sym, map){
+          const yf = map && map[sym];
+          return yf ? yf : sym;
+        }
     
-        const barsWrap = el("#bars-wrap");
-        const pairs = Object.entries(weights).sort((a,b)=> b[1]-a[1]);
-        const maxW = pairs.length ? Math.max(...pairs.map(([,w]) => Math.abs(w))) : 0;
-        const mkBar = (asset, w) => {
-          const pct = maxW > 0 ? Math.max(0, Math.min(100, Math.abs(w)/maxW*100)) : 0;
-          return `
-            <div class="bar-row">
-              <div class="bar-label">${asset}</div>
-              <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
-              <div class="right" style="width:60px">${fmtPct(w)}</div>
-            </div>`;
-        };
-        barsWrap.innerHTML = pairs.length ? pairs.map(([a,w]) => mkBar(a,w)).join("") : `<div class="small muted">No current allocation.</div>`;
+        function renderUniverse(name){
+          const payload = universes[name];
+          const linkMap = links[name] || {};
+          const theme   = themes[name] || null;
+          applyTheme(theme);
     
-        const tbody = el("#tbl-weights tbody");
-        const rowHtml = (asset, w) => {
-          const m = meta[asset] || {};
-          let sLabel = "Dead", pillClass = "dead";
-          const st = String(m.state || "").toLowerCase();
-          if (st === "alive (confirmed)") { sLabel = "Alive"; pillClass = "alive"; }
-          else if (st === "alive (candidate)") { sLabel = "Dead and Alive"; pillClass = "da"; }
+          el('#asof').textContent = 'as of ' + (new Date(payload.weights_time)).toISOString().slice(0,10);
     
-          const allocMark = (w > 0) ? "✓" : "";
-          const expectedHTML = arrowPct(m.view_blend);
-          const confHTML     = fmtPct1(m.view_conf);
+          const weights = payload.weights || {};
+          const meta    = payload.meta || {};
+          const tickers = Object.keys(meta).sort();
     
-          return `<tr>
-            <td><a href="https://finance.yahoo.com/quote/${asset}" target="_blank" rel="noopener noreferrer"><strong>${asset}</strong></a></td>
-            <td><span class="pill ${pillClass}">${sLabel}</span></td>
-            <td class="center">${allocMark}</td>
-            <td class="right">${fmtPct(w)}</td>
-            <td class="right">${expectedHTML}</td>
-            <td class="right">${confHTML}</td>
-          </tr>`;
-        };
+          const alive=[], da=[], dead=[];
+          for (const a of tickers){
+            const st = String((meta[a] && meta[a].state) || '').toLowerCase();
+            if (st === 'alive (confirmed)') alive.push(a);
+            else if (st === 'alive (candidate)') da.push(a);
+            else dead.push(a);
+          }
+          el('#counts').textContent = `Alive: ${alive.length} · Dead and Alive: ${da.length} · Dead: ${dead.length}`;
     
-        let html = "";
-        const inTable = new Set();
-        for (const [a, w] of pairs) { html += rowHtml(a, w); inTable.add(a); }
-        for (const a of tickers) { if (!inTable.has(a)) html += rowHtml(a, 0); }
-        tbody.innerHTML = html || `<tr><td colspan="6" class="center muted">No data</td></tr>`;
+          const fillList = (id, arr) => {
+            const ul = el(id);
+            ul.innerHTML = arr.map(a => {
+              const yf = yahooFor(a, linkMap);
+              return `<li><a href="https://finance.yahoo.com/quote/${yf}" target="_blank" rel="noopener noreferrer">${a}</a></li>`;
+            }).join('') || "<li><span class='muted'>None</span></li>";
+          };
+          fillList('#list-alive', alive);
+          fillList('#list-da', da);
+          fillList('#list-dead', dead);
+    
+          const barsWrap = el('#bars-wrap');
+          const pairs = Object.entries(weights).sort((a,b)=> b[1]-a[1]);
+          const maxW = pairs.length ? Math.max(...pairs.map(([,w]) => Math.abs(w))) : 0;
+          const mkBar = (asset, w) => {
+            const pct = maxW>0 ? Math.max(0, Math.min(100, Math.abs(w)/maxW*100)) : 0;
+            return `
+              <div class="bar-row">
+                <div class="bar-label">${asset}</div>
+                <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+                <div class="right" style="width:60px">${fmtPct(w)}</div>
+              </div>`;
+          };
+          barsWrap.innerHTML = pairs.length ? pairs.map(([a,w]) => mkBar(a,w)).join('') : `<div class="small muted">No current allocation.</div>`;
+    
+          const tbody = document.querySelector('#tbl-weights tbody');
+          const rowHtml = (asset, w) => {
+            const m = meta[asset] || {};
+            let sLabel = 'Dead', pillClass = 'dead';
+            const st = String(m.state || '').toLowerCase();
+            if (st === 'alive (confirmed)'){ sLabel='Alive'; pillClass='alive'; }
+            else if (st === 'alive (candidate)'){ sLabel='Dead and Alive'; pillClass='da'; }
+    
+            const allocMark = (w>0) ? '✓' : '';
+            const expectedHTML = arrowPct(m.view_blend);
+            const confHTML     = fmtPct1(m.view_conf);
+            const yf = yahooFor(asset, linkMap);
+    
+            return `<tr>
+              <td><a href="https://finance.yahoo.com/quote/${yf}" target="_blank" rel="noopener noreferrer"><strong>${asset}</strong></a></td>
+              <td><span class="pill ${pillClass}">${sLabel}</span></td>
+              <td class="center">${allocMark}</td>
+              <td class="right">${fmtPct(w)}</td>
+              <td class="right">${expectedHTML}</td>
+              <td class="right">${confHTML}</td>
+            </tr>`;
+          };
+          let html = '';
+          const inTable = new Set();
+          for (const [a, w] of pairs){ html += rowHtml(a, w); inTable.add(a); }
+          for (const a of tickers){ if (!inTable.has(a)) html += rowHtml(a, 0); }
+          tbody.innerHTML = html || `<tr><td colspan="6" class="center muted">No data</td></tr>`;
+        }
+    
+        renderUniverse(uniNames[0]);
+        el('#tabs').addEventListener('click', (e) => {
+          const btn = e.target.closest('.tab-btn');
+          if (!btn) return;
+          const name = btn.dataset.uni;
+          qsa('.tab-btn').forEach(b => b.setAttribute('aria-selected', String(b===btn)));
+          renderUniverse(name);
+        });
       })();
       </script>
     </body>
