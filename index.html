@@ -18,7 +18,7 @@
       header{border-bottom:2px solid var(--line);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
       h1{margin:0;font-size:20px;line-height:1.2;display:flex;align-items:center;gap:8px;font-weight:700;}
       .muted{color:var(--muted);font-weight:400;} .small{font-size:12px;}
-      main{max-width:1100px;margin:0 auto;padding:20px 24px 40px;}
+      main{max-width:1100px;margin:0 auto;padding:20px 24px 14px;}
       section+section{margin-top:28px;} h2{font-size:16px;margin:0 0 10px 0;font-weight:700;}
 
       .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
@@ -41,13 +41,16 @@
       .pill.da{background:var(--da-bg);color:var(--da-fg);}
       .pill.dead{background:var(--dead-bg);color:var(--dead-fg);}
 
-/* keep status list neutral */
       ul.slim{list-style:none;margin:8px 0 0;padding:0;columns:2;column-gap:16px;}
       ul.slim li{break-inside:avoid;padding:4px 0;font-size:14px;}
 
+      .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 8px;}
+      .search-input{border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:13px;min-width:200px;}
+
       table{width:100%;border-collapse:collapse;margin:10px 0 16px;}
       th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle;font-size:14px;}
-      th{background:var(--th);} tbody tr:nth-child(even){background:var(--stripe);}
+      th{background:var(--th);user-select:none;cursor:pointer;}
+      tbody tr:nth-child(even){background:var(--stripe);}
       .right{text-align:right;} .center{text-align:center;}
 
       .footnote{color:var(--muted);font-size:12px;line-height:1.5;border:1px dashed var(--line);border-radius:8px;padding:10px 12px;background:#fff;}
@@ -56,11 +59,19 @@
 
       .arrow{font-size:11px;margin-right:6px;}
       .arrow.up{color:#111;} .arrow.down{color:#777;} .arrow.flat{color:var(--muted);}
+
+      footer{border-top:2px solid var(--line);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+      .links a{color:var(--fg);text-decoration:underline 1px;}
+      .links a:hover{text-decoration-thickness:2px;}
     </style>
     </head>
     <body>
       <header>
         <h1><img src="schroedinger_40x40.png" alt="Logo" style="height:28px;vertical-align:middle;margin-right:12px;border:1px solid #111;padding:3px;border-radius:4px;background:#fff"/>Schrödinger's AI <span id="asof" class="muted small"></span></h1>
+        <div class="links">
+          <a href="https://twoquants.substack.com/" target="_blank" rel="noopener noreferrer">Substack</a> ·
+          <a href="https://x.com/schroedingersai" target="_blank" rel="noopener noreferrer">X (Twitter)</a>
+        </div>
         <div class="pill" id="counts">–</div>
       </header>
 
@@ -93,23 +104,28 @@
 
         <section>
           <h2>Allocation Details</h2>
+
+          <div class="controls">
+            <input id="asset-search" class="search-input" type="search" placeholder="Search asset… (e.g., EFA, BTCUSD)" />
+          </div>
+
           <table id="tbl-weights">
             <thead>
               <tr>
-                <th style="width:18%;">Asset</th>
-                <th style="width:14%;">State</th>
-                <th style="width:10%;">Allocation</th>
-                <th style="width:14%;" class="right">Weight</th>
-                <th style="width:12%;" class="right">Δ weight</th>  <!-- renamed -->
-                <th style="width:16%;" class="right">4w Fwd Return</th>
-                <th style="width:16%;" class="right">Confidence</th>
+                <th data-sort="asset">Asset</th>
+                <th data-sort="state">State</th>
+                <th data-sort="alloc" class="center">Allocation</th>
+                <th data-sort="weight" class="right">Weight</th>
+                <th data-sort="delta" class="right">Δ weight</th>
+                <th data-sort="expected" class="right">Fwd Return</th>
+                <th data-sort="conf" class="right">Confidence</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
 
           <div class="footnote">
-            A ✓ in "Allocation" marks assets currently held (weight &gt; 0).
+            A ✓ in “Allocation” marks assets currently held (weight &gt; 0).
             <div class="fn-block">
               <strong>Schrödinger logic (empirical similarity):</strong>
               <ul class="fn-list">
@@ -119,13 +135,23 @@
               </ul>
             </div>
             <div class="fn-block">
-              "4w Fwd Return" is the model's expected return over the next 4 weeks; "Confidence" is the model's conviction in that 4-week projection.
+              “Fwd Return” is the model's probability weighted forward return over the next 4-12 week; “Confidence” is the model's conviction in that projection.
             </div>
           </div>
         </section>
       </main>
 
-      <script id="payload-macro" type="application/json">{"generated_utc": "2025-09-27T21:17:38Z", "weights_time": "2025-09-26", "weights": {"EFA": 0.030132879051939503, "EEM": 0.03307667978183741, "TLT": 0.08954229149013763, "LQD": 0.2522391937660709, "IEF": 0.2618067827198695, "HYG": 0.28933045582103983, "IWMO": 0.04387171736910519, "CASH": 0.0}, "prev_weights_time": "2025-09-19", "prev_weights": {"EFA": 0.04912928567047018, "EEM": 0.0566520769537345, "LQD": 0.26230391035834344, "IEF": 0.2725590869373415, "DBC": 0.04760833538410417, "HYG": 0.31174730469600603, "CASH": 2.220446049250313e-16}, "alive": ["EEM", "EFA", "GLD", "HYG", "IEF", "IWMO", "LQD", "TLT", "UUP", "VNQ", "XLF"], "dead": ["ACWI", "DBC", "DBMF", "IWM", "QQQ", "SPY", "USO", "XLE", "XLK"], "meta": {"XLF": {"state": "Alive (candidate)", "confirm": true, "strength": 0.15397318452625885, "s": 0.030422186221727987, "view_blend": 0.007557873246838834, "view_conf": 0.7032828282828283}, "XLE": {"state": "Dead", "confirm": false, "strength": 0.46476124829087984, "s": 0.13500262001589305, "view_blend": -0.034498854694980825, "view_conf": 0.2708624708624709}, "XLK": {"state": "Dead", "confirm": false, "strength": -0.019513185885886908, "s": 0.08326395902389735, "view_blend": -0.004543080170862844, "view_conf": 0.4845959595959595}, "SPY": {"state": "Dead", "confirm": false, "strength": 0.01861026582405989, "s": 0.06597950526097496, "view_blend": -0.008763673795941316, "view_conf": 0.39318181818181813}, "EFA": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.037936029842118746, "s": 0.05257404364578252, "view_blend": 0.01671238957890083, "view_conf": 0.7897435897435899}, "IWM": {"state": "Dead", "confirm": false, "strength": 0.3856236587395514, "s": 0.11782317272738452, "view_blend": -0.021534865819725166, "view_conf": 0.3962962962962963}, "QQQ": {"state": "Dead", "confirm": false, "strength": 0.13331764220769804, "s": 0.09528902029421658, "view_blend": -0.003697219648275029, "view_conf": 0.5437229437229437}, "IWMO": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5000509143767402, "s": 0.06954100083049969, "view_blend": 0.017080125921203844, "view_conf": 0.644949494949495}, "EEM": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5990855169658584, "s": 0.05672503618654327, "view_blend": 0.03183630199040946, "view_conf": 0.9474747474747475}, "ACWI": {"state": "Dead", "confirm": false, "strength": 0.17591111768946566, "s": 0.0908712633790392, "view_blend": -0.008277908973487902, "view_conf": 0.39318181818181813}, "VNQ": {"state": "Alive (candidate)", "confirm": true, "strength": 0.20774608294458208, "s": 0.06195891506906595, "view_blend": 0.005487367270890804, "view_conf": 0.6166666666666667}, "TLT": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6206888706978619, "s": 0.10552527822309314, "view_blend": 0.007988430490175601, "view_conf": 0.6313131313131314}, "IEF": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.8878915199251287, "s": 0.17556110265668917, "view_blend": 0.004967623246681625, "view_conf": 0.6123737373737373}, "HYG": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5698763737325658, "s": 0.18329149726517982, "view_blend": 0.007654050359935956, "view_conf": 0.7867243867243867}, "LQD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6887084766339073, "s": 0.1727383880808266, "view_blend": 0.01504181056370207, "view_conf": 0.894949494949495}, "GLD": {"state": "Alive (candidate)", "confirm": true, "strength": 0.2085891702963769, "s": 0.0632316752548674, "view_blend": 0.04363714480634462, "view_conf": 0.7650793650793651}, "USO": {"state": "Dead", "confirm": false, "strength": 0.23848314825578987, "s": 0.10317076300507286, "view_blend": -0.015830319815116612, "view_conf": 0.33589743589743587}, "DBC": {"state": "Dead", "confirm": false, "strength": 0.5431826244542979, "s": 0.07956188802715507, "view_blend": -0.00430166361312001, "view_conf": 0.45749805749805755}, "UUP": {"state": "Alive (candidate)", "confirm": true, "strength": 0.11997661294558215, "s": 0.0529426456431532, "view_blend": 0.006799014398809295, "view_conf": 0.6167388167388167}, "DBMF": {"state": "Dead", "confirm": false, "strength": 0.2651648040855463, "s": 0.13297935849091616, "view_blend": 0.00325211297043363, "view_conf": 0.529040404040404}, "CASH": {"state": "Cash", "confirm": true, "strength": null, "s": null, "view_blend": null, "view_conf": null}}}</script><script id="links-macro" type="application/json">{"HYG": "HYG", "LQD": "LQD", "IWM": "IWM", "USO": "USO", "XLF": "XLF", "DBMF": "DBMF", "VNQ": "VNQ", "TLT": "TLT", "ACWI": "ACWI", "CASH": "CASH", "XLK": "XLK", "EFA": "EFA", "IEF": "IEF", "EEM": "EEM", "SPY": "SPY", "QQQ": "QQQ", "XLE": "XLE", "DBC": "DBC", "GLD": "GLD", "IWMO": "IS3R.DE", "UUP": "UUP"}</script><script id="theme-macro" type="application/json">{"bar": "rgba(47,58,70,0.25)", "alive_bg": "rgba(47,58,70,0.65)", "alive_fg": "#FFFFFF", "da_bg": "#6B7280", "da_fg": "#FFFFFF", "dead_bg": "#E5E7EB", "dead_fg": "#111111"}</script><script id="payload-crypto" type="application/json">{"generated_utc": "2025-09-27T21:17:38Z", "weights_time": "2025-09-26", "weights": {"DOGEUSD": 0.0682290617940592, "XRPUSD": 0.0682290617940592, "SOLUSD": 0.0682290617940592, "SUIUSD": 0.0682290617940592, "HYPEUSD": 0.0682290617940592, "CASH": 0.658854691029704}, "prev_weights_time": "2025-09-19", "prev_weights": {"BNBUSD": 0.11488960671831178, "SOLUSD": 0.11488960671831178, "SUIUSD": 0.11488960671831178, "HYPEUSD": 0.11488960671831178, "CASH": 0.5404415731267529}, "alive": ["AVAXUSD", "DOGEUSD", "HYPEUSD", "LINKUSD", "SOLUSD", "SUIUSD", "XRPUSD"], "dead": ["BNBUSD", "BTCUSD", "ETHUSD"], "meta": {"BTCUSD": {"state": "Dead", "confirm": false, "strength": 0.3408698251680735, "s": 2.248894042840454e-05, "view_blend": -0.010764511783756762, "view_conf": 0.5656565656565656}, "ETHUSD": {"state": "Dead", "confirm": false, "strength": 0.23021575716145914, "s": 1.464542778434041e-06, "view_blend": 0.014508656377803531, "view_conf": 0.34074074074074073}, "SOLUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6282907896520387, "s": 7.103250423737021e-10, "view_blend": 0.10304208158952506, "view_conf": 0.5815656565656565}, "XRPUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": -0.5465098999498936, "s": 8.456257315467382e-07, "view_blend": 0.032129347607853964, "view_conf": 0.5613275613275613}, "DOGEUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": -0.8605102610291522, "s": 3.427262029883791e-09, "view_blend": 0.09500715112186675, "view_conf": 0.6886002886002887}, "AVAXUSD": {"state": "Alive (candidate)", "confirm": true, "strength": -0.19405949007657686, "s": 3.557017944982031e-10, "view_blend": 0.1670499463230147, "view_conf": 0.7027417027417028}, "LINKUSD": {"state": "Alive (candidate)", "confirm": true, "strength": -0.17812761818494105, "s": 4.1717294636410065e-05, "view_blend": 0.14818187017878523, "view_conf": 0.5527777777777777}, "BNBUSD": {"state": "Dead", "confirm": false, "strength": -0.8750237450781189, "s": 3.174767435097844e-10, "view_blend": 0.09282925413315125, "view_conf": 0.5447811447811447}, "HYPEUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.0, "s": null, "view_blend": 0.1151190619056325, "view_conf": 0.6502164502164502}, "SUIUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": 1.0012489945841936, "s": 4.50130698425941e-14, "view_blend": 0.023195211557403797, "view_conf": 0.6787878787878787}, "CASH": {"state": "Cash", "confirm": true, "strength": null, "s": null, "view_blend": null, "view_conf": null}}}</script><script id="links-crypto" type="application/json">{"BNBUSD": "BNB-USD", "CASH": "CASH", "SUIUSD": "SUI20947-USD", "XRPUSD": "XRP-USD", "ETHUSD": "ETH-USD", "SOLUSD": "SOL-USD", "DOGEUSD": "DOGE-USD", "AVAXUSD": "AVAX-USD", "HYPEUSD": "HYPE32196-USD", "LINKUSD": "LINK-USD", "BTCUSD": "BTC-USD"}</script><script id="theme-crypto" type="application/json">{"bar": "rgba(63,63,70,0.25)", "alive_bg": "rgba(63,63,70,0.65)", "alive_fg": "#FFFFFF", "da_bg": "#6B7280", "da_fg": "#FFFFFF", "dead_bg": "#E5E7EB", "dead_fg": "#111111"}</script>
+      <footer>
+        <div class="links">
+          <a id="imprint-link" href="https://twoquants.com/imprint/" target="_blank" rel="noopener noreferrer">Imprint</a>
+        </div>
+        <div class="links">
+          <a href="https://twoquants.substack.com/" target="_blank" rel="noopener noreferrer">Substack</a> ·
+          <a href="https://x.com/schroedingersai" target="_blank" rel="noopener noreferrer">X (Twitter)</a>
+        </div>
+      </footer>
+
+      <script id="payload-macro" type="application/json">{"generated_utc": "2025-09-29T13:38:42Z", "weights_time": "2025-09-26", "weights": {"EEM": 0.03307667978183742, "TLT": 0.08954229149013765, "EFA": 0.030132879051939513, "LQD": 0.2522391937660709, "IEF": 0.26180678271986957, "HYG": 0.28933045582103983, "IWMO": 0.04387171736910519, "CASH": 0.0}, "prev_weights_time": "2025-09-19", "prev_weights": {"EEM": 0.0566520769537345, "EFA": 0.04912928567047018, "LQD": 0.2623039103583435, "IEF": 0.2725590869373415, "DBC": 0.047608335384104174, "HYG": 0.3117473046960061, "CASH": 1.1102230246251565e-16}, "alive": ["EEM", "EFA", "GLD", "HYG", "IEF", "IWMO", "LQD", "TLT", "UUP", "VNQ", "XLF"], "dead": ["ACWI", "DBC", "DBMF", "IWM", "QQQ", "SPY", "USO", "XLE", "XLK"], "meta": {"XLF": {"state": "Alive (candidate)", "confirm": true, "strength": 0.15397318452625885, "s": 0.030422186221727987, "view_blend": 0.007557873246838834, "view_conf": 0.7032828282828283}, "XLE": {"state": "Dead", "confirm": false, "strength": 0.46476124829087984, "s": 0.13500262001589305, "view_blend": -0.034498854694980825, "view_conf": 0.2708624708624709}, "XLK": {"state": "Dead", "confirm": false, "strength": -0.019513185885886908, "s": 0.08326395902389735, "view_blend": -0.004543080170862844, "view_conf": 0.4845959595959595}, "SPY": {"state": "Dead", "confirm": false, "strength": 0.01861026582405989, "s": 0.06597950526097496, "view_blend": -0.008763673795941316, "view_conf": 0.39318181818181813}, "EFA": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.037936029842118746, "s": 0.05257404364578252, "view_blend": 0.01671238957890083, "view_conf": 0.7897435897435899}, "IWM": {"state": "Dead", "confirm": false, "strength": 0.3856236587395514, "s": 0.11782317272738452, "view_blend": -0.021534865819725166, "view_conf": 0.3962962962962963}, "QQQ": {"state": "Dead", "confirm": false, "strength": 0.13331764220769804, "s": 0.09528902029421658, "view_blend": -0.003697219648275029, "view_conf": 0.5437229437229437}, "IWMO": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5000509143767402, "s": 0.06954100083049969, "view_blend": 0.017080125921203844, "view_conf": 0.644949494949495}, "EEM": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5990855169658584, "s": 0.05672503618654327, "view_blend": 0.03183630199040946, "view_conf": 0.9474747474747475}, "ACWI": {"state": "Dead", "confirm": false, "strength": 0.17591111768946566, "s": 0.0908712633790392, "view_blend": -0.008277908973487902, "view_conf": 0.39318181818181813}, "VNQ": {"state": "Alive (candidate)", "confirm": true, "strength": 0.20774608294458208, "s": 0.06195891506906595, "view_blend": 0.005487367270890804, "view_conf": 0.6166666666666667}, "TLT": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6206888706978619, "s": 0.10552527822309314, "view_blend": 0.007988430490175601, "view_conf": 0.6313131313131314}, "IEF": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.8878915199251287, "s": 0.17556110265668917, "view_blend": 0.004967623246681625, "view_conf": 0.6123737373737373}, "HYG": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.5698763737325658, "s": 0.18329149726517982, "view_blend": 0.007654050359935956, "view_conf": 0.7867243867243867}, "LQD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6887084766339073, "s": 0.1727383880808266, "view_blend": 0.01504181056370207, "view_conf": 0.894949494949495}, "GLD": {"state": "Alive (candidate)", "confirm": true, "strength": 0.2085891702963769, "s": 0.0632316752548674, "view_blend": 0.04363714480634462, "view_conf": 0.7650793650793651}, "USO": {"state": "Dead", "confirm": false, "strength": 0.23848314825578987, "s": 0.10317076300507286, "view_blend": -0.015830319815116612, "view_conf": 0.33589743589743587}, "DBC": {"state": "Dead", "confirm": false, "strength": 0.5431826244542979, "s": 0.07956188802715507, "view_blend": -0.00430166361312001, "view_conf": 0.45749805749805755}, "UUP": {"state": "Alive (candidate)", "confirm": true, "strength": 0.11997661294558215, "s": 0.0529426456431532, "view_blend": 0.006799014398809295, "view_conf": 0.6167388167388167}, "DBMF": {"state": "Dead", "confirm": false, "strength": 0.2651648040855463, "s": 0.13297935849091616, "view_blend": 0.00325211297043363, "view_conf": 0.529040404040404}, "CASH": {"state": "Cash", "confirm": true, "strength": null, "s": null, "view_blend": null, "view_conf": null}}}</script><script id="links-macro" type="application/json">{"USO": "USO", "IWM": "IWM", "IWMO": "IS3R.DE", "QQQ": "QQQ", "CASH": "CASH", "HYG": "HYG", "DBMF": "DBMF", "EFA": "EFA", "VNQ": "VNQ", "IEF": "IEF", "ACWI": "ACWI", "UUP": "UUP", "EEM": "EEM", "XLE": "XLE", "DBC": "DBC", "LQD": "LQD", "XLF": "XLF", "XLK": "XLK", "GLD": "GLD", "TLT": "TLT", "SPY": "SPY"}</script><script id="theme-macro" type="application/json">{"bar": "rgba(47,58,70,0.25)", "alive_bg": "rgba(47,58,70,0.65)", "alive_fg": "#FFFFFF", "da_bg": "#6B7280", "da_fg": "#FFFFFF", "dead_bg": "#E5E7EB", "dead_fg": "#111111"}</script><script id="whitelist-macro" type="application/json">["ACWI", "DBC", "DBMF", "EEM", "EFA", "GLD", "HYG", "IEF", "IWM", "IWMO", "LQD", "QQQ", "SPY", "TLT", "USO", "UUP", "VNQ", "XLE", "XLF", "XLK"]</script><script id="payload-crypto" type="application/json">{"generated_utc": "2025-09-29T13:38:42Z", "weights_time": "2025-09-26", "weights": {"DOGEUSD": 0.0682290617940592, "XRPUSD": 0.0682290617940592, "SOLUSD": 0.0682290617940592, "SUIUSD": 0.0682290617940592, "HYPEUSD": 0.0682290617940592, "CASH": 0.658854691029704}, "prev_weights_time": "2025-09-19", "prev_weights": {"BNBUSD": 0.11488960671831178, "SOLUSD": 0.11488960671831178, "SUIUSD": 0.11488960671831178, "HYPEUSD": 0.11488960671831178, "CASH": 0.5404415731267529}, "alive": ["AVAXUSD", "DOGEUSD", "HYPEUSD", "LINKUSD", "SOLUSD", "SUIUSD", "XRPUSD"], "dead": ["BNBUSD", "BTCUSD", "ETHUSD"], "meta": {"BTCUSD": {"state": "Dead", "confirm": false, "strength": 0.3408698251680735, "s": 2.248894042840454e-05, "view_blend": -0.010764511783756762, "view_conf": 0.5656565656565656}, "ETHUSD": {"state": "Dead", "confirm": false, "strength": 0.23021575716145914, "s": 1.464542778434041e-06, "view_blend": 0.014508656377803531, "view_conf": 0.34074074074074073}, "SOLUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.6282907896520387, "s": 7.103250423737021e-10, "view_blend": 0.10304208158952506, "view_conf": 0.5815656565656565}, "XRPUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": -0.5465098999498936, "s": 8.456257315467382e-07, "view_blend": 0.032129347607853964, "view_conf": 0.5613275613275613}, "DOGEUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": -0.8605102610291522, "s": 3.427262029883791e-09, "view_blend": 0.09500715112186675, "view_conf": 0.6886002886002887}, "AVAXUSD": {"state": "Alive (candidate)", "confirm": true, "strength": -0.19405949007657686, "s": 3.557017944982031e-10, "view_blend": 0.1670499463230147, "view_conf": 0.7027417027417028}, "LINKUSD": {"state": "Alive (candidate)", "confirm": true, "strength": -0.17812761818494105, "s": 4.1717294636410065e-05, "view_blend": 0.14818187017878523, "view_conf": 0.5527777777777777}, "BNBUSD": {"state": "Dead", "confirm": false, "strength": -0.8750237450781189, "s": 3.174767435097844e-10, "view_blend": 0.09282925413315125, "view_conf": 0.5447811447811447}, "HYPEUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": 0.0, "s": null, "view_blend": 0.1151190619056325, "view_conf": 0.6502164502164502}, "SUIUSD": {"state": "Alive (confirmed)", "confirm": true, "strength": 1.0012489945841936, "s": 4.50130698425941e-14, "view_blend": 0.023195211557403797, "view_conf": 0.6787878787878787}, "CASH": {"state": "Cash", "confirm": true, "strength": null, "s": null, "view_blend": null, "view_conf": null}}}</script><script id="links-crypto" type="application/json">{"SOLUSD": "SOL-USD", "BTCUSD": "BTC-USD", "DOGEUSD": "DOGE-USD", "HYPEUSD": "HYPE32196-USD", "ETHUSD": "ETH-USD", "AVAXUSD": "AVAX-USD", "LINKUSD": "LINK-USD", "CASH": "CASH", "SUIUSD": "SUI20947-USD", "BNBUSD": "BNB-USD", "XRPUSD": "XRP-USD"}</script><script id="theme-crypto" type="application/json">{"bar": "rgba(63,63,70,0.25)", "alive_bg": "rgba(63,63,70,0.65)", "alive_fg": "#FFFFFF", "da_bg": "#6B7280", "da_fg": "#FFFFFF", "dead_bg": "#E5E7EB", "dead_fg": "#111111"}</script><script id="whitelist-crypto" type="application/json">["AVAX-USD", "BNB-USD", "BTC-USD", "DOGE-USD", "ETH-USD", "HYPE32196-USD", "LINK-USD", "SOL-USD", "SUI20947-USD", "XRP-USD"]</script>
 
       <script>
       (function(){
@@ -142,7 +168,6 @@
           return '<span class="arrow flat">—</span>'+fmtPct1(x);
         };
         const deltaHTML = (curr, prev) => {
-          // treat missing prev as 0 so newly-added positions show a +Δ
           const p = (prev === undefined || prev === null || isNaN(prev)) ? 0 : prev;
           if (!Number.isFinite(curr) || !Number.isFinite(p)) return "";
           const d = curr - p;
@@ -159,6 +184,7 @@
         const universes = loads('payload-');
         const links     = loads('links-');
         const themes    = loads('theme-');
+        const whitelists= loads('whitelist-'); // NEW
 
         const tabs = el('#tabs');
         uniNames.forEach((name, i) => {
@@ -188,10 +214,37 @@
           return yf ? yf : sym;
         }
 
+        // Sorting helpers
+        let currentSort = {key: 'weight', dir: 'desc'};
+        function compareRows(a, b, key) {
+          const av = parseFloat(a.dataset[key]); const bv = parseFloat(b.dataset[key]);
+          if (!isNaN(av) && !isNaN(bv)) return av - bv;
+          // fallback to string compare
+          return String(a.dataset[key]||'').localeCompare(String(b.dataset[key]||''));
+        }
+        function applySort(tbody) {
+          const rows = Array.from(tbody.querySelectorAll('tr'));
+          rows.sort((ra, rb) => {
+            const s = compareRows(ra, rb, currentSort.key);
+            return currentSort.dir === 'asc' ? s : -s;
+          });
+          rows.forEach(r => tbody.appendChild(r));
+        }
+
+        // Search filter
+        function applySearch(tbody, term) {
+          const t = term.trim().toLowerCase();
+          Array.from(tbody.querySelectorAll('tr')).forEach(tr => {
+            const asset = (tr.dataset.asset || '').toLowerCase();
+            tr.style.display = (!t || asset.includes(t)) ? '' : 'none';
+          });
+        }
+
         function renderUniverse(name){
-          const payload = universes[name];
-          const linkMap = links[name] || {};
-          const theme   = themes[name] || null;
+          const payload   = universes[name];
+          const linkMap   = links[name] || {};
+          const theme     = themes[name] || null;
+          const whitelist = new Set(whitelists[name] || []); // NEW
           applyTheme(theme);
 
           el('#asof').textContent = 'as of ' + (new Date(payload.weights_time)).toISOString().slice(0,10);
@@ -216,7 +269,7 @@
           const fillList = (id, arr) => {
             const ul = el(id);
             ul.innerHTML = arr.map(a => {
-              if (a === 'CASH') return ''; // just in case
+              if (a === 'CASH') return '';
               const yf = yahooFor(a, linkMap);
               return `<li><a href="https://finance.yahoo.com/quote/${yf}" target="_blank" rel="noopener noreferrer">${a}</a></li>`;
             }).filter(Boolean).join('') || "<li><span class='muted'>None</span></li>";
@@ -225,11 +278,15 @@
           fillList('#list-da', da);
           fillList('#list-dead', dead);
 
-          // Bars — scale using both current and previous magnitudes
+          // BARS — Only whitelisted assets (plus CASH if present)
           const barsWrap = el('#bars-wrap');
-          const pairs = Object.entries(weights).sort((a,b)=> b[1]-a[1]);
+          const entries = Object.entries(weights);
+          const pairsAll = entries.sort((a,b)=> b[1]-a[1]);
+          const pairs = pairsAll.filter(([a,_]) => (a === 'CASH') || (!whitelist.size || whitelist.has(a))); // NEW
           const allVals = pairs.map(([,w]) => Math.abs(w));
-          for (const [a, pw] of Object.entries(prevWeights)) allVals.push(Math.abs(pw));
+          for (const [a, pw] of Object.entries(prevWeights)) {
+            if ((a === 'CASH') || (!whitelist.size || whitelist.has(a))) allVals.push(Math.abs(pw));
+          }
           const maxW = allVals.length ? Math.max(...allVals) : 0;
 
           const mkBar = (asset, w) => {
@@ -247,28 +304,26 @@
                 <div class="right" style="width:60px">${fmtPct(w)}</div>
               </div>`;
           };
-          barsWrap.innerHTML = pairs.length ? pairs.map(([a,w]) => mkBar(a,w)).join('') : `<div class="small muted">No current allocation.</div>`;
+          barsWrap.innerHTML = pairs.length ? pairs.map(([a,w]) => mkBar(a, w)).join('') : `<div class="small muted">No current allocation.</div>`;
 
-          // Table
+          // TABLE — All assets with signals (not just whitelist)
           const tbody = document.querySelector('#tbl-weights tbody');
-          const rowHtml = (asset, w) => {
+          tbody.innerHTML = ""; // reset
+          const mkRow = (asset, w) => {
             const m = meta[asset] || {};
-            let stateCell = '', pillClass = 'dead';
-
-            // Special handling for CASH: no state pill, no Yahoo link, no alloc checkmark
             const isCash = (asset === 'CASH');
 
+            let stateText = '', stateOrder = 3; // for sorting: alive=1, da=2, dead=3, cash=0
             if (!isCash) {
               const st = String(m.state || '').toLowerCase();
-              let sLabel = 'Dead';
-              if (st === 'alive (confirmed)'){ sLabel='Alive'; pillClass='alive'; }
-              else if (st === 'alive (candidate)'){ sLabel='Dead and Alive'; pillClass='da'; }
-              stateCell = `<span class="pill ${pillClass}">${sLabel}</span>`;
+              if (st === 'alive (confirmed)') { stateText='Alive'; stateOrder=1; }
+              else if (st === 'alive (candidate)') { stateText='Dead and Alive'; stateOrder=2; }
+              else { stateText='Dead'; stateOrder=3; }
             } else {
-              stateCell = ''; // no pill for Cash
+              stateText=''; stateOrder=0;
             }
 
-            const allocMark    = (!isCash && w > 0) ? '✓' : ''; // don't mark allocation for CASH
+            const allocMark    = (!isCash && w > 0) ? '✓' : '';
             const expectedHTML = arrowPct(m.view_blend);
             const confHTML     = fmtPct1(m.view_conf);
             const yf           = yahooFor(asset, linkMap);
@@ -276,10 +331,15 @@
             const dHTML        = deltaHTML(w, prev);
 
             const assetCell = isCash
-              ? `<strong>${asset}</strong>`  // plain text, no link
+              ? `<strong>${asset}</strong>`
               : `<a href="https://finance.yahoo.com/quote/${yf}" target="_blank" rel="noopener noreferrer"><strong>${asset}</strong></a>`;
+            const stateCell = isCash ? '' :
+              (stateText === 'Alive' ? '<span class="pill alive">Alive</span>' :
+               stateText === 'Dead and Alive' ? '<span class="pill da">Dead and Alive</span>' :
+               '<span class="pill dead">Dead</span>');
 
-            return `<tr>
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
               <td>${assetCell}</td>
               <td>${stateCell}</td>
               <td class="center">${allocMark}</td>
@@ -287,27 +347,62 @@
               <td class="right">${dHTML}</td>
               <td class="right">${expectedHTML}</td>
               <td class="right">${confHTML}</td>
-            </tr>`;
+            `;
+            // dataset for sorting/search
+            tr.dataset.asset    = asset;
+            tr.dataset.state    = stateText;
+            tr.dataset.stateord = String(stateOrder);
+            tr.dataset.alloc    = allocMark ? '1' : '0';
+            tr.dataset.weight   = isNaN(w) ? '' : String(w);
+            tr.dataset.delta    = isNaN(w - prev) ? '' : String(w - prev);
+            tr.dataset.expected = isNaN(m.view_blend) ? '' : String(m.view_blend);
+            tr.dataset.conf     = isNaN(m.view_conf) ? '' : String(m.view_conf);
+            return tr;
           };
 
-          let html = '';
           const inTable = new Set();
+
+          // Always put CASH first if present
           if (allSymbols.includes('CASH')) {
-            html += rowHtml('CASH', weights['CASH'] || 0);
+            tbody.appendChild(mkRow('CASH', weights['CASH'] || 0));
             inTable.add('CASH');
           }
-          for (const [a, w] of pairs) {
-          if (a !== 'CASH') {
-            html += rowHtml(a, w);
+
+          // Then by current weights (desc)
+          const pairsAllForTable = Object.entries(weights).sort((a,b)=> b[1]-a[1]);
+          for (const [a, w] of pairsAllForTable) {
+            if (a === 'CASH') continue;
+            tbody.appendChild(mkRow(a, w));
             inTable.add(a);
           }
-            }
-            for (const a of allSymbols) {
-              if (!inTable.has(a)) html += rowHtml(a, 0);
-            }
-          tbody.innerHTML = html || `<tr><td colspan="7" class="center muted">No data</td></tr>`;
+
+          // Finally the rest (weight=0)
+          for (const a of allSymbols) {
+            if (!inTable.has(a)) tbody.appendChild(mkRow(a, 0));
+          }
+
+          // Apply initial sort (by weight desc)
+          currentSort = {key: 'weight', dir: 'desc'};
+          applySort(tbody);
+
+          // Search hookup
+          const search = byId('asset-search');
+          search.oninput = () => applySearch(tbody, search.value);
+
+          // Sort hookup (clickable headers)
+          const thead = document.querySelector('#tbl-weights thead');
+          thead.onclick = (ev) => {
+            const th = ev.target.closest('th[data-sort]');
+            if (!th) return;
+            const key = th.dataset.sort;
+            // special mapping: state uses numeric order
+            currentSort.key = (key === 'state') ? 'stateord' : key;
+            currentSort.dir = (currentSort.key === key && currentSort.dir === 'asc') ? 'desc' : 'asc';
+            applySort(tbody);
+          };
         }
 
+        // init
         renderUniverse(uniNames[0]);
         el('#tabs').addEventListener('click', (e) => {
           const btn = e.target.closest('.tab-btn');
@@ -315,6 +410,8 @@
           const name = btn.dataset.uni;
           qsa('.tab-btn').forEach(b => b.setAttribute('aria-selected', String(b===btn)));
           renderUniverse(name);
+          // reset search when switching tabs (optional)
+          const search = byId('asset-search'); if (search) { search.value = ""; }
         });
       })();
       </script>
